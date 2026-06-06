@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NovaOne — A Contribution-Based Economic and Governance Protocol exploring future economic coordination systems.">
+    <title>NovaOne — Contribution-Based Economic Protocol</title>
+    
+    <!-- Typography: Premium Pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #000000;
+            --surface-low: #0a0a0a;
+            --surface-mid: #141414;
+            --text-main: #ffffff;
+            --text-dim: #a1a1a1;
+            --text-muted: #555555;
+            --accent: #ffffff;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; background: var(--bg); }
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Institutional Grain Texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section-padding { padding: 140px 0; }
+        .mono { font-family: var(--font-mono); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text-muted); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: var(--transition); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000;
+            padding: 2rem 0;
+            transition: var(--transition);
+        }
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 600; font-size: 1.1rem; text-decoration: none; color: var(--text-main); letter-spacing: -0.02em; }
+        .nav-links { display: flex; gap: 3rem; }
+        .nav-links a { text-decoration: none; color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; transition: var(--transition); }
+        .nav-links a:hover { color: var(--text-main); }
+
+        /* Hero */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+        .hero-grid {
+            position: absolute; width: 200%; height: 200%;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 80px 80px;
+            transform: perspective(1000px) rotateX(60deg) translateY(-200px);
+            opacity: 0.15;
+        }
+        .hero-content { position: relative; z-index: 10; max-width: 900px; }
+        .hero h1 { font-family: var(--font-serif); font-size: clamp(4rem, 12vw, 9rem); font-weight: 400; margin-bottom: 1rem; letter-spacing: -0.03em; line-height: 0.9; }
+        .hero p.tagline { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; color: var(--text-dim); margin-bottom: 3rem; }
+        
+        .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 1.2rem 2.5rem; border-radius: 0; font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; text-decoration: none; transition: var(--transition); cursor: pointer; }
+        .btn-primary { background: var(--text-main); color: var(--bg); border: 1px solid var(--text-main); }
+        .btn-primary:hover { background: transparent; color: var(--text-main); }
+        .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid var(--border-hover); }
+        .btn-secondary:hover { border-color: var(--text-main); }
+
+        /* Grid Principles */
+        .principles-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 4rem; }
+        .p-card { background: var(--bg); padding: 4rem 2rem; transition: var(--transition); }
+        .p-card:hover { background: var(--surface-low); }
+        .p-card h3 { font-size: 1.1rem; font-weight: 500; margin: 1.5rem 0 1rem; }
+        .p-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
+
+        /* About & Expanded Info */
+        .about-wrap { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 6rem; align-items: start; }
+        .about-text h2 { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 400; margin-bottom: 2rem; line-height: 1.1; }
+        .about-text p { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 2rem; }
+        .info-sidebar { background: var(--surface-low); padding: 3rem; border: 1px solid var(--border); }
+        .info-sidebar h4 { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+        .info-sidebar ul { list-style: none; }
+        .info-sidebar li { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+
+        /* Publications */
+        .pub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 4rem; }
+        .pub-card { background: var(--surface-low); border: 1px solid var(--border); padding: 3rem; display: flex; flex-direction: column; }
+        .pub-card h3 { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 400; margin-bottom: 1rem; }
+        .pub-card p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 2.5rem; flex-grow: 1; }
+        .pub-actions { display: flex; gap: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+        .pub-actions a { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-main); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; }
+        
+        .doi-bar { background: var(--surface-mid); padding: 3rem; margin-top: 4rem; display: flex; justify-content: space-between; align-items: center; border-left: 2px solid var(--text-main); flex-wrap: wrap; gap: 2rem; }
+
+        /* Roadmap */
+        .roadmap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; margin-top: 4rem; }
+        .road-col { border-top: 1px solid var(--border-hover); padding-top: 2rem; }
+        .status-tag { display: inline-block; padding: 0.3rem 0.8rem; font-family: var(--font-mono); font-size: 0.6rem; background: var(--surface-mid); margin-bottom: 2rem; }
+        .road-list { list-style: none; }
+        .road-list li { font-size: 0.95rem; color: var(--text-dim); margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; }
+        .check { color: #ffffff; font-weight: bold; }
+        .dot { color: var(--text-muted); }
+
+        /* Future Directions Grid */
+        .future-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; }
+        .future-card { border: 1px solid var(--border); padding: 2.5rem; transition: var(--transition); }
+        .future-card:hover { border-color: var(--text-dim); background: var(--surface-low); }
+        .future-card h4 { font-size: 1rem; margin-bottom: 1rem; font-weight: 500; }
+        .future-card p { font-size: 0.8rem; color: var(--text-dim); line-height: 1.6; }
+
+        /* Footer */
+        footer { padding: 100px 0 50px; background: var(--surface-low); border-top: 1px solid var(--border); }
+        .footer-top { display: flex; justify-content: space-between; margin-bottom: 80px; flex-wrap: wrap; gap: 3rem; }
+        .footer-logo h2 { font-size: 2rem; font-family: var(--font-serif); margin-bottom: 0.5rem; }
+        .footer-links { display: flex; gap: 4rem; }
+        .footer-col h5 { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 1.5rem; text-transform: uppercase; }
+        .footer-col a { display: block; color: var(--text-dim); text-decoration: none; font-size: 0.9rem; margin-bottom: 0.8rem; transition: var(--transition); }
+        .footer-col a:hover { color: var(--text-main); }
+        .footer-bottom { border-top: 1px solid var(--border); padding-top: 40px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .principles-grid { grid-template-columns: repeat(3, 1fr); }
+            .future-grid { grid-template-columns: repeat(2, 1fr); }
+            .about-wrap { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 4.5rem; }
+            .principles-grid, .roadmap-grid, .future-grid { grid-template-columns: 1fr; }
+            .doi-bar { flex-direction: column; text-align: center; }
+            .section-padding { padding: 80px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="nav">
+        <div class="container nav-content">
+            <a href="#" class="logo">NOVAONE</a>
+            <div class="nav-links">
+                <a href="#about">Mission</a>
+                <a href="#principles">Pillars</a>
+                <a href="#publications">Research</a>
+                <a href="#roadmap">Roadmap</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-grid"></div>
+        <div class="container hero-content">
+            <h1 class="reveal">NOVAONE</h1>
+            <p class="tagline reveal">A Contribution-Based Economic and Governance Protocol</p>
+            <div class="btn-group reveal">
+                <a href="#publications" class="btn btn-primary">Read Litepaper</a>
+                <a href="#publications" class="btn btn-secondary">Whitepapers</a>
+                <a href="https://doi.org/10.5281/zenodo.20505677" target="_blank" class="btn btn-secondary">Zenodo Publication</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MISSION / ABOUT -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <div class="about-wrap">
+                <div class="about-text reveal">
+                    <p class="mono">The Mission</p>
+                    <h2>Architecting the<br>Foundations of Digital Society</h2>
+                    <p>NovaOne is a research initiative exploring contribution-based economics, governance architectures, ownership systems, and future economic coordination frameworks.</p>
+                    <p>As automation and artificial intelligence redefine the concept of "labor," our project investigates how societies may adapt to digital infrastructure while preserving transparency, accountability, and individual freedom.</p>
+                    <p>Our focus lies at the intersection of reputation-based assets and autonomous governance—ensuring that value creation remains recognized regardless of whether it is human or machine-originated.</p>
+                </div>
+                <div class="info-sidebar reveal">
+                    <h4>Key Research Context</h4>
+                    <ul>
+                        <li><strong>AI-Coordination:</strong> Managing the transition from labor-based to contribution-based value recognition in automated economies.</li>
+                        <li><strong>Reputation Systems:</strong> Development of non-transferable contribution metrics as a basis for governance.</li>
+                        <li><strong>Scalable Governance:</strong> Implementing fractal decision-making systems for global-scale participation.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE PILLARS -->
+    <section id="principles" class="section-padding" style="background: var(--surface-low);">
+        <div class="container">
+            <p class="mono reveal">Protocol Design</p>
+            <h2 class="reveal" style="font-family: var(--font-serif); font-size: 3rem; margin-top: 1rem; font-weight: 400;">Five Core Pillars</h2>
+            
+            <div class="principles-grid reveal">
+                <div class="p-card">
+                    <span class="mono">01</span>
+                    <h3>Contribution</h3>
+                    <p>Recognition of meaningful participation and value creation as the primary driver of ecosystem rights.</p>
+                </div>
+                <div class="p-card">
+                    <span class="mono">02</span>
+                    <h3>Ownership</h3>
+                    <p>Preserving participant autonomy and the digital sovereignty of individuals over their created output.</p>
+                </div>
+                <div class="p-card">
+                    <span class="mono">03</span>
+                    <h3>Governance</h3>
+                    <p>Transparent, adaptable, and participatory decision-making architectures designed to evolve.</p>
+                </div>
+                <div class="p-card">
+                    <span class="mono">04</span>
+                    <h3>Coordination</h3>
+                    <p>Frameworks for large-scale economic cooperation across increasingly digital and automated borders.</p>
+                </div>
+                <div class="p-card">
+                    <span class="mono">05</span>
+                    <h3>Evolution</h3>
+                    <p>A constitutional framework designed for long-term growth and technical adaptability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PUBLICATIONS -->
+    <section id="publications" class="section-padding">
+        <div class="container">
+            <p class="mono reveal">Documentation</p>
+            <h2 class="reveal" style="font-family: var(--font-serif); font-size: 3rem; margin-top: 1rem; font-weight: 400;">Research & Publications</h2>
+            
+            <div class="pub-grid">
+                <div class="pub-card reveal">
+                    <span class="mono">Core Concept</span>
+                    <h3>Litepaper</h3>
+                    <p>A high-level introduction to the NovaOne protocol, detailing its mission and foundational economic coordination concepts.</p>
+                    <div class="pub-actions">
+                        <a href="https://drive.google.com/file/d/1ImYkKHtHAMrY8r8iK2gsw-_13P83N33D/view?pli=1" target="_blank">Read</a>
+                    </div>
+                </div>
+                <div class="pub-card reveal">
+                    <span class="mono">Technical I</span>
+                    <h3>Whitepaper 1</h3>
+                    <p>Deep dive into foundations, architecture, principles, and the protocol governance framework.</p>
+                    <div class="pub-actions">
+                        <a href="https://drive.google.com/file/d/1f98ZpzHIK45mmLHX0iiQQWK91yT1AErK/view" target="_blank">Read</a>
+                    </div>
+                </div>
+                <div class="pub-card reveal">
+                    <span class="mono">Technical II</span>
+                    <h3>Whitepaper 2</h3>
+                    <p>Exploring advanced technical structures, future coordination mechanisms, and long-term development.</p>
+                    <div class="pub-actions">
+                        <a href="https://drive.google.com/file/d/1SaluW6o7v33dLzapEDmWBW-NobazNSNs/view" target="_blank">Read</a>
+                    </div>
+                </div>
+                <div class="pub-card reveal">
+                    <span class="mono">Academic Record</span>
+                    <h3>Zenodo</h3>
+                    <p>The official public archival record for NovaOne research, providing permanent access to our methodology.</p>
+                    <div class="pub-actions">
+                        <a href="https://doi.org/10.5281/zenodo.20505677" target="_blank">Open Publication</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doi-bar reveal">
+                <div>
+                    <span class="mono" style="display: block; margin-bottom: 0.5rem;">Digital Object Identifier</span>
+                    <span style="font-family: var(--font-mono); font-size: 1.1rem;">https://doi.org/10.5281/zenodo.20505677</span>
+                </div>
+                <a href="https://doi.org/10.5281/zenodo.20505677" target="_blank" class="btn btn-primary">Check here</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap" class="section-padding" style="background: var(--surface-low);">
+        <div class="container">
+            <p class="mono reveal">Trajectory</p>
+            <h2 class="reveal" style="font-family: var(--font-serif); font-size: 3rem; margin-top: 1rem; font-weight: 400;">The Roadmap</h2>
+            
+            <div class="roadmap-grid reveal">
+                <div class="road-col">
+                    <span class="status-tag">Completed</span>
+                    <ul class="road-list">
+                        <li><span class="check">✓</span> Research Formulation</li>
+                        <li><span class="check">✓</span> Litepaper Publication</li>
+                        <li><span class="check">✓</span> Whitepaper 1 & 2</li>
+                        <li><span class="check">✓</span> DOI Assigned (Zenodo)</li>
+                    </ul>
+                </div>
+                <div class="road-col">
+                    <span class="status-tag">Current</span>
+                    <ul class="road-list">
+                        <li><span class="dot">✓ & ⏳</span> Website Development</li>
+                        <li><span class="dot">⏳</span> Community Formation</li>
+                        <li><span class="dot">⏳</span> Foundation Setup</li>
+                    </ul>
+                </div>
+                <div class="road-col">
+                    <span class="status-tag">Future</span>
+                    <ul class="road-list">
+                        <li><span class="dot">○</span> Prototype Development</li>
+                        <li><span class="dot">○</span> Ecosystem Coordination</li>
+                        <li><span class="dot">○</span> Governance Launch</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FUTURE GRID -->
+    <section class="section-padding">
+        <div class="container">
+            <p class="mono reveal">Expansion</p>
+            <h2 class="reveal" style="font-family: var(--font-serif); font-size: 3rem; margin: 1rem 0 4rem; font-weight: 400;">Future Development</h2>
+            <div class="future-grid reveal">
+                <div class="future-card"><h4>Research</h4><p>Continuous exploration of contribution-based economics and governance.</p></div>
+                <div class="future-card"><h4>Community</h4><p>Building a network of thinkers, students, and contributors worldwide.</p></div>
+                <div class="future-card"><h4>Prototype</h4><p>Practical demonstrations and experimental implementations of protocol concepts.</p></div>
+                <div class="future-card"><h4>Governance</h4><p>Exploration of transparent and participatory decision-making mechanisms.</p></div>
+                <div class="future-card"><h4>Economic Systems</h4><p>Research into value creation, incentives, and long-term sustainability.</p></div>
+                <div class="future-card"><h4>Frameworks</h4><p>New methods for organizing cooperation across digital societies.</p></div>
+                <div class="future-card"><h4>AI & Automation</h4><p>Understanding the transformation of labor, ownership, and participation.</p></div>
+                <div class="future-card"><h4>Evolution</h4><p>Systems designed to adapt to future civilizational milestones.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <h2>NOVAONE</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Contribution • Ownership • Governance • Coordination • Evolution</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h5>Research</h5>
+                        <a href="https://doi.org/10.5281/zenodo.20505677" target="_blank">Zenodo</a>
+                        <a href="https://doi.org/10.5281/zenodo.20505677" target="_blank">DOI</a>
+                        <a href="#publications">Library</a>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Contact</h5>
+                        <a href="mailto:varshithnn2024@gmail.com">varshithnn2024@gmail.com</a>
+                        <a href="dmto:@varshith5289n > X ">@varshith5289n > X</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© NovaOne Research. All rights reserved.</p>
+                <p>Designed for the future of economic coordination.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Effect for Nav
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 100) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // Intersection Observer for Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
